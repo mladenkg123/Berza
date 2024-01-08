@@ -29,6 +29,46 @@ public final class Stockexchange {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_FollowedSymbolsRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_AskRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_AskRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_BidRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BidRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_SellOffer_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SellOffer_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_BuyOffer_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BuyOffer_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_BuyRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BuyRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_BuyResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_BuyResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_SellRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SellRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_SellResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_SellResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -43,11 +83,26 @@ public final class Stockexchange {
       "\030\003 \001(\001\022\016\n\006change\030\004 \001(\001\022\014\n\004date\030\005 \001(\t\")\n\014" +
       "StockRequest\022\031\n\021numberOfCompanies\030d \001(\005\"" +
       ")\n\026FollowedSymbolsRequest\022\017\n\007symbols\030\001 \003" +
-      "(\t2\207\001\n\024StockExchangeService\022-\n\014getStockD" +
-      "ata\022\r.StockRequest\032\n.StockData\"\0000\001\022@\n\025up" +
-      "dateFollowedSymbols\022\027.FollowedSymbolsReq" +
-      "uest\032\n.StockData\"\0000\001B\031\n\025rs.raf.pds.v5.z2" +
-      ".gRPCP\001b\006proto3"
+      "(\t\";\n\nAskRequest\022\025\n\rcompanySymbol\030\001 \001(\t\022" +
+      "\026\n\016numberOfOffers\030\002 \001(\005\";\n\nBidRequest\022\025\n" +
+      "\rcompanySymbol\030\001 \001(\t\022\026\n\016numberOfOffers\030\002" +
+      " \001(\005\",\n\tSellOffer\022\r\n\005price\030\001 \001(\001\022\020\n\010quan" +
+      "tity\030\002 \001(\005\"+\n\010BuyOffer\022\r\n\005price\030\001 \001(\001\022\020\n" +
+      "\010quantity\030\002 \001(\005\"L\n\nBuyRequest\022\025\n\rcompany" +
+      "Symbol\030\001 \001(\t\022\025\n\rpricePerShare\030\002 \001(\001\022\020\n\010q" +
+      "uantity\030\003 \001(\005\"/\n\013BuyResponse\022\017\n\007success\030" +
+      "\001 \001(\010\022\017\n\007message\030\002 \001(\t\"M\n\013SellRequest\022\025\n" +
+      "\rcompanySymbol\030\001 \001(\t\022\025\n\rpricePerShare\030\002 " +
+      "\001(\001\022\020\n\010quantity\030\003 \001(\005\"0\n\014SellResponse\022\017\n" +
+      "\007success\030\001 \001(\010\022\017\n\007message\030\002 \001(\t2\231\002\n\024Stoc" +
+      "kExchangeService\022-\n\014getStockData\022\r.Stock" +
+      "Request\032\n.StockData\"\0000\001\022@\n\025updateFollowe" +
+      "dSymbols\022\027.FollowedSymbolsRequest\032\n.Stoc" +
+      "kData\"\0000\001\022\"\n\003Ask\022\013.AskRequest\032\n.SellOffe" +
+      "r\"\0000\001\022!\n\003Bid\022\013.BidRequest\032\t.BuyOffer\"\0000\001" +
+      "\022\"\n\003buy\022\013.BuyRequest\032\014.BuyResponse\"\000\022%\n\004" +
+      "sell\022\014.SellRequest\032\r.SellResponse\"\000B\031\n\025r" +
+      "s.raf.pds.v5.z2.gRPCP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -71,6 +126,54 @@ public final class Stockexchange {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_FollowedSymbolsRequest_descriptor,
         new java.lang.String[] { "Symbols", });
+    internal_static_AskRequest_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_AskRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_AskRequest_descriptor,
+        new java.lang.String[] { "CompanySymbol", "NumberOfOffers", });
+    internal_static_BidRequest_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_BidRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_BidRequest_descriptor,
+        new java.lang.String[] { "CompanySymbol", "NumberOfOffers", });
+    internal_static_SellOffer_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_SellOffer_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_SellOffer_descriptor,
+        new java.lang.String[] { "Price", "Quantity", });
+    internal_static_BuyOffer_descriptor =
+      getDescriptor().getMessageTypes().get(6);
+    internal_static_BuyOffer_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_BuyOffer_descriptor,
+        new java.lang.String[] { "Price", "Quantity", });
+    internal_static_BuyRequest_descriptor =
+      getDescriptor().getMessageTypes().get(7);
+    internal_static_BuyRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_BuyRequest_descriptor,
+        new java.lang.String[] { "CompanySymbol", "PricePerShare", "Quantity", });
+    internal_static_BuyResponse_descriptor =
+      getDescriptor().getMessageTypes().get(8);
+    internal_static_BuyResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_BuyResponse_descriptor,
+        new java.lang.String[] { "Success", "Message", });
+    internal_static_SellRequest_descriptor =
+      getDescriptor().getMessageTypes().get(9);
+    internal_static_SellRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_SellRequest_descriptor,
+        new java.lang.String[] { "CompanySymbol", "PricePerShare", "Quantity", });
+    internal_static_SellResponse_descriptor =
+      getDescriptor().getMessageTypes().get(10);
+    internal_static_SellResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_SellResponse_descriptor,
+        new java.lang.String[] { "Success", "Message", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

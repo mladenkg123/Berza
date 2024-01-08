@@ -91,6 +91,134 @@ public final class StockExchangeServiceGrpc {
      }
      return getUpdateFollowedSymbolsMethod;
   }
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  @java.lang.Deprecated // Use {@link #getAskMethod()} instead. 
+  public static final io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.AskRequest,
+      rs.raf.pds.v5.z2.gRPC.SellOffer> METHOD_ASK = getAskMethod();
+
+  private static volatile io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.AskRequest,
+      rs.raf.pds.v5.z2.gRPC.SellOffer> getAskMethod;
+
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  public static io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.AskRequest,
+      rs.raf.pds.v5.z2.gRPC.SellOffer> getAskMethod() {
+    io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.AskRequest, rs.raf.pds.v5.z2.gRPC.SellOffer> getAskMethod;
+    if ((getAskMethod = StockExchangeServiceGrpc.getAskMethod) == null) {
+      synchronized (StockExchangeServiceGrpc.class) {
+        if ((getAskMethod = StockExchangeServiceGrpc.getAskMethod) == null) {
+          StockExchangeServiceGrpc.getAskMethod = getAskMethod = 
+              io.grpc.MethodDescriptor.<rs.raf.pds.v5.z2.gRPC.AskRequest, rs.raf.pds.v5.z2.gRPC.SellOffer>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName(generateFullMethodName(
+                  "StockExchangeService", "Ask"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  rs.raf.pds.v5.z2.gRPC.AskRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  rs.raf.pds.v5.z2.gRPC.SellOffer.getDefaultInstance()))
+                  .setSchemaDescriptor(new StockExchangeServiceMethodDescriptorSupplier("Ask"))
+                  .build();
+          }
+        }
+     }
+     return getAskMethod;
+  }
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  @java.lang.Deprecated // Use {@link #getBidMethod()} instead. 
+  public static final io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.BidRequest,
+      rs.raf.pds.v5.z2.gRPC.BuyOffer> METHOD_BID = getBidMethod();
+
+  private static volatile io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.BidRequest,
+      rs.raf.pds.v5.z2.gRPC.BuyOffer> getBidMethod;
+
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  public static io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.BidRequest,
+      rs.raf.pds.v5.z2.gRPC.BuyOffer> getBidMethod() {
+    io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.BidRequest, rs.raf.pds.v5.z2.gRPC.BuyOffer> getBidMethod;
+    if ((getBidMethod = StockExchangeServiceGrpc.getBidMethod) == null) {
+      synchronized (StockExchangeServiceGrpc.class) {
+        if ((getBidMethod = StockExchangeServiceGrpc.getBidMethod) == null) {
+          StockExchangeServiceGrpc.getBidMethod = getBidMethod = 
+              io.grpc.MethodDescriptor.<rs.raf.pds.v5.z2.gRPC.BidRequest, rs.raf.pds.v5.z2.gRPC.BuyOffer>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName(generateFullMethodName(
+                  "StockExchangeService", "Bid"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  rs.raf.pds.v5.z2.gRPC.BidRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  rs.raf.pds.v5.z2.gRPC.BuyOffer.getDefaultInstance()))
+                  .setSchemaDescriptor(new StockExchangeServiceMethodDescriptorSupplier("Bid"))
+                  .build();
+          }
+        }
+     }
+     return getBidMethod;
+  }
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  @java.lang.Deprecated // Use {@link #getBuyMethod()} instead. 
+  public static final io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.BuyRequest,
+      rs.raf.pds.v5.z2.gRPC.BuyResponse> METHOD_BUY = getBuyMethod();
+
+  private static volatile io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.BuyRequest,
+      rs.raf.pds.v5.z2.gRPC.BuyResponse> getBuyMethod;
+
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  public static io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.BuyRequest,
+      rs.raf.pds.v5.z2.gRPC.BuyResponse> getBuyMethod() {
+    io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.BuyRequest, rs.raf.pds.v5.z2.gRPC.BuyResponse> getBuyMethod;
+    if ((getBuyMethod = StockExchangeServiceGrpc.getBuyMethod) == null) {
+      synchronized (StockExchangeServiceGrpc.class) {
+        if ((getBuyMethod = StockExchangeServiceGrpc.getBuyMethod) == null) {
+          StockExchangeServiceGrpc.getBuyMethod = getBuyMethod = 
+              io.grpc.MethodDescriptor.<rs.raf.pds.v5.z2.gRPC.BuyRequest, rs.raf.pds.v5.z2.gRPC.BuyResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "StockExchangeService", "buy"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  rs.raf.pds.v5.z2.gRPC.BuyRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  rs.raf.pds.v5.z2.gRPC.BuyResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new StockExchangeServiceMethodDescriptorSupplier("buy"))
+                  .build();
+          }
+        }
+     }
+     return getBuyMethod;
+  }
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  @java.lang.Deprecated // Use {@link #getSellMethod()} instead. 
+  public static final io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.SellRequest,
+      rs.raf.pds.v5.z2.gRPC.SellResponse> METHOD_SELL = getSellMethod();
+
+  private static volatile io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.SellRequest,
+      rs.raf.pds.v5.z2.gRPC.SellResponse> getSellMethod;
+
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  public static io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.SellRequest,
+      rs.raf.pds.v5.z2.gRPC.SellResponse> getSellMethod() {
+    io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.SellRequest, rs.raf.pds.v5.z2.gRPC.SellResponse> getSellMethod;
+    if ((getSellMethod = StockExchangeServiceGrpc.getSellMethod) == null) {
+      synchronized (StockExchangeServiceGrpc.class) {
+        if ((getSellMethod = StockExchangeServiceGrpc.getSellMethod) == null) {
+          StockExchangeServiceGrpc.getSellMethod = getSellMethod = 
+              io.grpc.MethodDescriptor.<rs.raf.pds.v5.z2.gRPC.SellRequest, rs.raf.pds.v5.z2.gRPC.SellResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(
+                  "StockExchangeService", "sell"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  rs.raf.pds.v5.z2.gRPC.SellRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  rs.raf.pds.v5.z2.gRPC.SellResponse.getDefaultInstance()))
+                  .setSchemaDescriptor(new StockExchangeServiceMethodDescriptorSupplier("sell"))
+                  .build();
+          }
+        }
+     }
+     return getSellMethod;
+  }
 
   /**
    * Creates a new async stub that supports all call types for the service
@@ -133,6 +261,34 @@ public final class StockExchangeServiceGrpc {
       asyncUnimplementedUnaryCall(getUpdateFollowedSymbolsMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void ask(rs.raf.pds.v5.z2.gRPC.AskRequest request,
+        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.SellOffer> responseObserver) {
+      asyncUnimplementedUnaryCall(getAskMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void bid(rs.raf.pds.v5.z2.gRPC.BidRequest request,
+        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.BuyOffer> responseObserver) {
+      asyncUnimplementedUnaryCall(getBidMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void buy(rs.raf.pds.v5.z2.gRPC.BuyRequest request,
+        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.BuyResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getBuyMethod(), responseObserver);
+    }
+
+    /**
+     */
+    public void sell(rs.raf.pds.v5.z2.gRPC.SellRequest request,
+        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.SellResponse> responseObserver) {
+      asyncUnimplementedUnaryCall(getSellMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -149,6 +305,34 @@ public final class StockExchangeServiceGrpc {
                 rs.raf.pds.v5.z2.gRPC.FollowedSymbolsRequest,
                 rs.raf.pds.v5.z2.gRPC.StockData>(
                   this, METHODID_UPDATE_FOLLOWED_SYMBOLS)))
+          .addMethod(
+            getAskMethod(),
+            asyncServerStreamingCall(
+              new MethodHandlers<
+                rs.raf.pds.v5.z2.gRPC.AskRequest,
+                rs.raf.pds.v5.z2.gRPC.SellOffer>(
+                  this, METHODID_ASK)))
+          .addMethod(
+            getBidMethod(),
+            asyncServerStreamingCall(
+              new MethodHandlers<
+                rs.raf.pds.v5.z2.gRPC.BidRequest,
+                rs.raf.pds.v5.z2.gRPC.BuyOffer>(
+                  this, METHODID_BID)))
+          .addMethod(
+            getBuyMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                rs.raf.pds.v5.z2.gRPC.BuyRequest,
+                rs.raf.pds.v5.z2.gRPC.BuyResponse>(
+                  this, METHODID_BUY)))
+          .addMethod(
+            getSellMethod(),
+            asyncUnaryCall(
+              new MethodHandlers<
+                rs.raf.pds.v5.z2.gRPC.SellRequest,
+                rs.raf.pds.v5.z2.gRPC.SellResponse>(
+                  this, METHODID_SELL)))
           .build();
     }
   }
@@ -186,6 +370,38 @@ public final class StockExchangeServiceGrpc {
       asyncServerStreamingCall(
           getChannel().newCall(getUpdateFollowedSymbolsMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void ask(rs.raf.pds.v5.z2.gRPC.AskRequest request,
+        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.SellOffer> responseObserver) {
+      asyncServerStreamingCall(
+          getChannel().newCall(getAskMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void bid(rs.raf.pds.v5.z2.gRPC.BidRequest request,
+        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.BuyOffer> responseObserver) {
+      asyncServerStreamingCall(
+          getChannel().newCall(getBidMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void buy(rs.raf.pds.v5.z2.gRPC.BuyRequest request,
+        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.BuyResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getBuyMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     */
+    public void sell(rs.raf.pds.v5.z2.gRPC.SellRequest request,
+        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.SellResponse> responseObserver) {
+      asyncUnaryCall(
+          getChannel().newCall(getSellMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -221,6 +437,36 @@ public final class StockExchangeServiceGrpc {
       return blockingServerStreamingCall(
           getChannel(), getUpdateFollowedSymbolsMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public java.util.Iterator<rs.raf.pds.v5.z2.gRPC.SellOffer> ask(
+        rs.raf.pds.v5.z2.gRPC.AskRequest request) {
+      return blockingServerStreamingCall(
+          getChannel(), getAskMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public java.util.Iterator<rs.raf.pds.v5.z2.gRPC.BuyOffer> bid(
+        rs.raf.pds.v5.z2.gRPC.BidRequest request) {
+      return blockingServerStreamingCall(
+          getChannel(), getBidMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public rs.raf.pds.v5.z2.gRPC.BuyResponse buy(rs.raf.pds.v5.z2.gRPC.BuyRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getBuyMethod(), getCallOptions(), request);
+    }
+
+    /**
+     */
+    public rs.raf.pds.v5.z2.gRPC.SellResponse sell(rs.raf.pds.v5.z2.gRPC.SellRequest request) {
+      return blockingUnaryCall(
+          getChannel(), getSellMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -240,10 +486,30 @@ public final class StockExchangeServiceGrpc {
         io.grpc.CallOptions callOptions) {
       return new StockExchangeServiceFutureStub(channel, callOptions);
     }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<rs.raf.pds.v5.z2.gRPC.BuyResponse> buy(
+        rs.raf.pds.v5.z2.gRPC.BuyRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getBuyMethod(), getCallOptions()), request);
+    }
+
+    /**
+     */
+    public com.google.common.util.concurrent.ListenableFuture<rs.raf.pds.v5.z2.gRPC.SellResponse> sell(
+        rs.raf.pds.v5.z2.gRPC.SellRequest request) {
+      return futureUnaryCall(
+          getChannel().newCall(getSellMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_STOCK_DATA = 0;
   private static final int METHODID_UPDATE_FOLLOWED_SYMBOLS = 1;
+  private static final int METHODID_ASK = 2;
+  private static final int METHODID_BID = 3;
+  private static final int METHODID_BUY = 4;
+  private static final int METHODID_SELL = 5;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -269,6 +535,22 @@ public final class StockExchangeServiceGrpc {
         case METHODID_UPDATE_FOLLOWED_SYMBOLS:
           serviceImpl.updateFollowedSymbols((rs.raf.pds.v5.z2.gRPC.FollowedSymbolsRequest) request,
               (io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.StockData>) responseObserver);
+          break;
+        case METHODID_ASK:
+          serviceImpl.ask((rs.raf.pds.v5.z2.gRPC.AskRequest) request,
+              (io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.SellOffer>) responseObserver);
+          break;
+        case METHODID_BID:
+          serviceImpl.bid((rs.raf.pds.v5.z2.gRPC.BidRequest) request,
+              (io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.BuyOffer>) responseObserver);
+          break;
+        case METHODID_BUY:
+          serviceImpl.buy((rs.raf.pds.v5.z2.gRPC.BuyRequest) request,
+              (io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.BuyResponse>) responseObserver);
+          break;
+        case METHODID_SELL:
+          serviceImpl.sell((rs.raf.pds.v5.z2.gRPC.SellRequest) request,
+              (io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.SellResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -333,6 +615,10 @@ public final class StockExchangeServiceGrpc {
               .setSchemaDescriptor(new StockExchangeServiceFileDescriptorSupplier())
               .addMethod(getGetStockDataMethod())
               .addMethod(getUpdateFollowedSymbolsMethod())
+              .addMethod(getAskMethod())
+              .addMethod(getBidMethod())
+              .addMethod(getBuyMethod())
+              .addMethod(getSellMethod())
               .build();
         }
       }
