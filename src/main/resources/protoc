@@ -1,0 +1,2 @@
+protoc --plugin=protoc-gen-grpc-java=C:\Users\Mladen\Desktop\Protoc\bin\protoc-gen-grpc-java-1.9.1-windows-x86_64.exe --java_out=src\main\java --grpc-java_out=src\main\java --proto_path=src\main\resources stockexchange.proto
+

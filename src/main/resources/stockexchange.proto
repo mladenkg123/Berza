@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "rs.raf.pds.v5.z2.gRPC";
+
+service StockExchangeService {
+
+    rpc getStockData(StockRequest) returns (stream StockData) {}
+    
+    rpc updateFollowedSymbols(FollowedSymbolsRequest) returns (stream StockData) {}
+    
+}
+
+message StockData {
+    string symbol = 1;
+    string companyName = 2;
+    double price = 3;
+    double change = 4;
+    string date = 5;
+}
+
+message StockRequest {
+    int32 numberOfCompanies = 100;
+}
+
+
+message FollowedSymbolsRequest {
+    repeated string symbols = 1;
+}

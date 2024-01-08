@@ -1,0 +1,1 @@
+java -cp "raf-pds-grpc-1.0.jar;lib/*" rs.raf.pds.v5.z2.StudentServiceClient
