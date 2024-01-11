@@ -16,6 +16,10 @@ import rs.raf.pds.v5.z2.gRPC.BuyOffer;
 import rs.raf.pds.v5.z2.gRPC.BuyRequest;
 import rs.raf.pds.v5.z2.gRPC.BuyResponse;
 import rs.raf.pds.v5.z2.gRPC.FollowedSymbolsRequest;
+import rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest;
+import rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse;
+import rs.raf.pds.v5.z2.gRPC.OrderRequest;
+import rs.raf.pds.v5.z2.gRPC.OrderResponse;
 import rs.raf.pds.v5.z2.gRPC.SellOffer;
 import rs.raf.pds.v5.z2.gRPC.SellRequest;
 import rs.raf.pds.v5.z2.gRPC.SellResponse;
@@ -35,7 +39,9 @@ public class StockExchangeClient {
     private static final String BID_COMMAND = "/bid";
     private static final String BUY_COMMAND = "/buy";
     private static final String SELL_COMMAND = "/sell";
-    
+    private static final String SUBMIT_COMMAND = "/submit";
+    private static String clientId;
+
     static {
         AnsiConsole.systemInstall();
     }
@@ -72,9 +78,8 @@ public class StockExchangeClient {
         }
         /////////////////////////////////////////////PRINT STOCKS//////////////////////////////////////////
         
+        generateClientId(asyncStub);
         
-        
-
         System.out.println("Type '/exit' to close the application.");
         System.out.println("Type '/follow @symbol' or '/follow @symbol1,@symbol2,...' to follow specific symbols.");
         Scanner scanner = new Scanner(System.in);
@@ -119,7 +124,19 @@ public class StockExchangeClient {
                      System.out.println(symbol);
                      System.out.println(numberOfOffers);
                      askForBidOffers(asyncStub, symbol, numberOfOffers);
-            }
+            } 
+             } else if (userInput.startsWith(SUBMIT_COMMAND)) { 
+                 String[] commandParts = userInput.split(" ", 5);
+                 
+                 System.out.println(commandParts);
+                 if (commandParts.length == 5) {
+                	 String buyOrSell = commandParts[1];
+                     String symbol = commandParts[2];
+                     double pricePerShare = Double.parseDouble(commandParts[3]);
+                     int quantity = Integer.parseInt(commandParts[4]);
+                     
+                     submitOrder(asyncStub, buyOrSell ,symbol, pricePerShare, quantity);
+                 }
             } else if (userInput.startsWith(BUY_COMMAND)) {
                 String[] tokens = userInput.substring(BUY_COMMAND.length()).trim().split(" ");
                 if (tokens.length == 3) {
@@ -137,6 +154,44 @@ public class StockExchangeClient {
             }
         }
     }
+    
+    
+    
+    //////////////////////////////////////////CLIENT ID /////////////////////////////////
+    
+    
+    private static void generateClientId(StockExchangeServiceStub asyncStub) {
+        asyncStub.generateClientId(GenerateClientIdRequest.newBuilder().build(), new StreamObserver<GenerateClientIdResponse>() {
+
+            @Override
+            public void onNext(GenerateClientIdResponse response) {
+                clientId = response.getClientId();
+                System.out.println("Received client ID: " + clientId);
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                t.printStackTrace();
+            }
+
+            @Override
+            public void onCompleted() {
+            }
+        });
+    }
+    	
+    
+    
+    
+    
+    
+    //////////////////////////////////////////CLIENT ID /////////////////////////////////
+    
+    
+    
+    
+    
     
     
   static  StreamObserver<StockData> responseObserver = new StreamObserver<StockData>() {
@@ -189,7 +244,7 @@ public class StockExchangeClient {
 
         @Override
         public void onCompleted() {
-        	System.out.println("Ask request completed for symbol ");
+        	System.out.println("Bid request completed for symbol ");
         }
     };
     
@@ -226,6 +281,9 @@ public class StockExchangeClient {
         @Override
         public void onCompleted() {
         }
+        
+        
+        
     };
     
     
@@ -235,6 +293,7 @@ public class StockExchangeClient {
                 .build();
 
         asyncStub.updateFollowedSymbols(followedSymbolsRequest,responseObserver);
+        
 
        /* List<StockData> updatedFollowedStocks = new ArrayList<>();
         for (Iterator<StockData> iterator = followedStocks; iterator.hasNext(); ) {
@@ -312,6 +371,7 @@ public class StockExchangeClient {
                 .setCompanySymbol(symbol)
                 .setPricePerShare(pricePerShare)
                 .setQuantity(quantity)
+                .setClientId(clientId)
                 .build();
 
         System.out.println("Calling Buy method...");
@@ -326,6 +386,7 @@ public class StockExchangeClient {
                 .setCompanySymbol(symbol)
                 .setPricePerShare(pricePerShare)
                 .setQuantity(quantity)
+                .setClientId(clientId)
                 .build();
 
         System.out.println("Calling Sell method...");
@@ -335,6 +396,36 @@ public class StockExchangeClient {
     }
     
     
+    
+    private static void submitOrder(StockExchangeServiceStub asyncStub,String buyOrSell, String symbol, double pricePerShare, int quantity) {
+        OrderRequest orderRequest = OrderRequest.newBuilder()
+        		.setBuyOrSell(buyOrSell.trim())
+                .setCompanySymbol(symbol)     
+                .setPricePerShare(pricePerShare) 
+                .setQuantity(quantity)
+                .setClientId(clientId)
+                .build();
+
+        System.out.println("Calling SubmitOrder method...");
+
+        asyncStub.submitOrder(orderRequest, new StreamObserver<OrderResponse>() {
+            @Override
+            public void onNext(OrderResponse response) {
+                System.out.println(response.getMessage());
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                System.err.println("Error occurred: " + throwable.getMessage());
+            }
+
+            @Override
+            public void onCompleted() {
+                System.out.println("SubmitOrder request completed for symbol " + symbol);
+            }
+        });
+    }
+
     
     
     

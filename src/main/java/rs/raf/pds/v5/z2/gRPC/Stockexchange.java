@@ -69,6 +69,36 @@ public final class Stockexchange {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_SellResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_OrderRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_OrderRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_OrderResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_OrderResponse_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_TradeNotification_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_TradeNotification_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_TradeDetails_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_TradeDetails_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_GenerateClientIdRequest_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_GenerateClientIdRequest_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_GenerateClientIdResponse_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_GenerateClientIdResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -88,21 +118,39 @@ public final class Stockexchange {
       "\rcompanySymbol\030\001 \001(\t\022\026\n\016numberOfOffers\030\002" +
       " \001(\005\",\n\tSellOffer\022\r\n\005price\030\001 \001(\001\022\020\n\010quan" +
       "tity\030\002 \001(\005\"+\n\010BuyOffer\022\r\n\005price\030\001 \001(\001\022\020\n" +
-      "\010quantity\030\002 \001(\005\"L\n\nBuyRequest\022\025\n\rcompany" +
+      "\010quantity\030\002 \001(\005\"^\n\nBuyRequest\022\025\n\rcompany" +
       "Symbol\030\001 \001(\t\022\025\n\rpricePerShare\030\002 \001(\001\022\020\n\010q" +
-      "uantity\030\003 \001(\005\"/\n\013BuyResponse\022\017\n\007success\030" +
-      "\001 \001(\010\022\017\n\007message\030\002 \001(\t\"M\n\013SellRequest\022\025\n" +
-      "\rcompanySymbol\030\001 \001(\t\022\025\n\rpricePerShare\030\002 " +
-      "\001(\001\022\020\n\010quantity\030\003 \001(\005\"0\n\014SellResponse\022\017\n" +
-      "\007success\030\001 \001(\010\022\017\n\007message\030\002 \001(\t2\231\002\n\024Stoc" +
-      "kExchangeService\022-\n\014getStockData\022\r.Stock" +
-      "Request\032\n.StockData\"\0000\001\022@\n\025updateFollowe" +
-      "dSymbols\022\027.FollowedSymbolsRequest\032\n.Stoc" +
-      "kData\"\0000\001\022\"\n\003Ask\022\013.AskRequest\032\n.SellOffe" +
-      "r\"\0000\001\022!\n\003Bid\022\013.BidRequest\032\t.BuyOffer\"\0000\001" +
-      "\022\"\n\003buy\022\013.BuyRequest\032\014.BuyResponse\"\000\022%\n\004" +
-      "sell\022\014.SellRequest\032\r.SellResponse\"\000B\031\n\025r" +
-      "s.raf.pds.v5.z2.gRPCP\001b\006proto3"
+      "uantity\030\003 \001(\005\022\020\n\010clientId\030\004 \001(\t\"/\n\013BuyRe" +
+      "sponse\022\017\n\007success\030\001 \001(\010\022\017\n\007message\030\002 \001(\t" +
+      "\"_\n\013SellRequest\022\025\n\rcompanySymbol\030\001 \001(\t\022\025" +
+      "\n\rpricePerShare\030\002 \001(\001\022\020\n\010quantity\030\003 \001(\005\022" +
+      "\020\n\010clientId\030\004 \001(\t\"0\n\014SellResponse\022\017\n\007suc" +
+      "cess\030\001 \001(\010\022\017\n\007message\030\002 \001(\t\"s\n\014OrderRequ" +
+      "est\022\021\n\tbuyOrSell\030\001 \001(\t\022\025\n\rcompanySymbol\030" +
+      "\002 \001(\t\022\025\n\rpricePerShare\030\003 \001(\001\022\020\n\010quantity" +
+      "\030\004 \001(\005\022\020\n\010clientId\030\005 \001(\t\"1\n\rOrderRespons" +
+      "e\022\017\n\007success\030\001 \001(\010\022\017\n\007message\030\002 \001(\t\"\202\001\n\021" +
+      "TradeNotification\022\025\n\rbuyerClientId\030\001 \001(\t" +
+      "\022\026\n\016sellerClientId\030\002 \001(\t\022\025\n\rcompanySymbo" +
+      "l\030\003 \001(\t\022\025\n\rpricePerShare\030\004 \001(\001\022\020\n\010quanti" +
+      "ty\030\005 \001(\005\"w\n\014TradeDetails\022\025\n\rbuyerClientI" +
+      "d\030\001 \001(\t\022\025\n\rcompanySymbol\030\002 \001(\t\022\025\n\rpriceP" +
+      "erShare\030\003 \001(\001\022\020\n\010quantity\030\004 \001(\005\022\020\n\010clien" +
+      "tId\030\005 \001(\t\"\031\n\027GenerateClientIdRequest\",\n\030" +
+      "GenerateClientIdResponse\022\020\n\010clientId\030\001 \001" +
+      "(\t2\312\003\n\024StockExchangeService\022-\n\014getStockD" +
+      "ata\022\r.StockRequest\032\n.StockData\"\0000\001\022@\n\025up" +
+      "dateFollowedSymbols\022\027.FollowedSymbolsReq" +
+      "uest\032\n.StockData\"\0000\001\022\"\n\003Ask\022\013.AskRequest" +
+      "\032\n.SellOffer\"\0000\001\022!\n\003Bid\022\013.BidRequest\032\t.B" +
+      "uyOffer\"\0000\001\022\"\n\003buy\022\013.BuyRequest\032\014.BuyRes" +
+      "ponse\"\000\022%\n\004sell\022\014.SellRequest\032\r.SellResp" +
+      "onse\"\000\022.\n\013submitOrder\022\r.OrderRequest\032\016.O" +
+      "rderResponse\"\000\0224\n\013notifyTrade\022\022.TradeNot" +
+      "ification\032\r.TradeDetails\"\0000\001\022I\n\020generate" +
+      "ClientId\022\030.GenerateClientIdRequest\032\031.Gen" +
+      "erateClientIdResponse\"\000B\031\n\025rs.raf.pds.v5" +
+      ".z2.gRPCP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -155,7 +203,7 @@ public final class Stockexchange {
     internal_static_BuyRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_BuyRequest_descriptor,
-        new java.lang.String[] { "CompanySymbol", "PricePerShare", "Quantity", });
+        new java.lang.String[] { "CompanySymbol", "PricePerShare", "Quantity", "ClientId", });
     internal_static_BuyResponse_descriptor =
       getDescriptor().getMessageTypes().get(8);
     internal_static_BuyResponse_fieldAccessorTable = new
@@ -167,13 +215,49 @@ public final class Stockexchange {
     internal_static_SellRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_SellRequest_descriptor,
-        new java.lang.String[] { "CompanySymbol", "PricePerShare", "Quantity", });
+        new java.lang.String[] { "CompanySymbol", "PricePerShare", "Quantity", "ClientId", });
     internal_static_SellResponse_descriptor =
       getDescriptor().getMessageTypes().get(10);
     internal_static_SellResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_SellResponse_descriptor,
         new java.lang.String[] { "Success", "Message", });
+    internal_static_OrderRequest_descriptor =
+      getDescriptor().getMessageTypes().get(11);
+    internal_static_OrderRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_OrderRequest_descriptor,
+        new java.lang.String[] { "BuyOrSell", "CompanySymbol", "PricePerShare", "Quantity", "ClientId", });
+    internal_static_OrderResponse_descriptor =
+      getDescriptor().getMessageTypes().get(12);
+    internal_static_OrderResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_OrderResponse_descriptor,
+        new java.lang.String[] { "Success", "Message", });
+    internal_static_TradeNotification_descriptor =
+      getDescriptor().getMessageTypes().get(13);
+    internal_static_TradeNotification_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_TradeNotification_descriptor,
+        new java.lang.String[] { "BuyerClientId", "SellerClientId", "CompanySymbol", "PricePerShare", "Quantity", });
+    internal_static_TradeDetails_descriptor =
+      getDescriptor().getMessageTypes().get(14);
+    internal_static_TradeDetails_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_TradeDetails_descriptor,
+        new java.lang.String[] { "BuyerClientId", "CompanySymbol", "PricePerShare", "Quantity", "ClientId", });
+    internal_static_GenerateClientIdRequest_descriptor =
+      getDescriptor().getMessageTypes().get(15);
+    internal_static_GenerateClientIdRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_GenerateClientIdRequest_descriptor,
+        new java.lang.String[] { });
+    internal_static_GenerateClientIdResponse_descriptor =
+      getDescriptor().getMessageTypes().get(16);
+    internal_static_GenerateClientIdResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_GenerateClientIdResponse_descriptor,
+        new java.lang.String[] { "ClientId", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

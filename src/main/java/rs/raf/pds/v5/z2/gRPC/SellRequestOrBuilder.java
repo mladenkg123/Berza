@@ -30,4 +30,16 @@ public interface SellRequestOrBuilder extends
    * @return The quantity.
    */
   int getQuantity();
+
+  /**
+   * <code>string clientId = 4;</code>
+   * @return The clientId.
+   */
+  java.lang.String getClientId();
+  /**
+   * <code>string clientId = 4;</code>
+   * @return The bytes for clientId.
+   */
+  com.google.protobuf.ByteString
+      getClientIdBytes();
 }
