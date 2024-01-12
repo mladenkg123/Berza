@@ -20,10 +20,8 @@ service StockExchangeService {
     rpc sell(SellRequest) returns (SellResponse) {}
     
     rpc submitOrder(OrderRequest) returns (OrderResponse) {}
-    
-    rpc notifyTrade(TradeNotification) returns (stream TradeDetails) {}
-    
-    rpc generateClientId(GenerateClientIdRequest) returns (GenerateClientIdResponse) {}
+        
+    rpc generateClientId(GenerateClientIdRequest) returns (stream GenerateClientIdResponse) {}
     
     
 }
@@ -105,26 +103,13 @@ message OrderResponse {
     string message = 2;
 }
 
-message TradeNotification {
-    string buyerClientId = 1;
-    string sellerClientId = 2;
-    string companySymbol = 3;
-    double pricePerShare = 4;
-    int32 quantity = 5;
-}
-
-message TradeDetails {
-    string buyerClientId = 1;
-    string companySymbol = 2;
-    double pricePerShare = 3;
-    int32 quantity = 4;
-    string clientId = 5;
-}
 
 message GenerateClientIdRequest {}
 
 message GenerateClientIdResponse {
     string clientId = 1;
+    string message = 2;
+    int32 balance = 3;
 }
 
 

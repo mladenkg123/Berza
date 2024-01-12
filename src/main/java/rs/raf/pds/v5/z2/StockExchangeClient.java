@@ -40,7 +40,7 @@ public class StockExchangeClient {
     private static final String BUY_COMMAND = "/buy";
     private static final String SELL_COMMAND = "/sell";
     private static final String SUBMIT_COMMAND = "/submit";
-    private static String clientId;
+    private static String clientId = null;
 
     static {
         AnsiConsole.systemInstall();
@@ -165,8 +165,18 @@ public class StockExchangeClient {
 
             @Override
             public void onNext(GenerateClientIdResponse response) {
-                clientId = response.getClientId();
-                System.out.println("Received client ID: " + clientId);
+           
+                if (clientId == null ) {
+                	clientId = response.getClientId();
+                     System.out.println("Received client ID: " + clientId);
+                } else{
+                	
+                	if (response.getMessage() != null) {
+                		System.out.println(response.getMessage());               		
+                	}
+                }
+                
+               
 
             }
 

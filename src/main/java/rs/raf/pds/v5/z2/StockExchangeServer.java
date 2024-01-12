@@ -4,7 +4,6 @@ import io.grpc.Server;
 
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-import jdk.security.jarsigner.JarSigner.Builder;
 import rs.raf.pds.v5.z2.gRPC.AskRequest;
 import rs.raf.pds.v5.z2.gRPC.BidRequest;
 import rs.raf.pds.v5.z2.gRPC.BuyOffer;
@@ -21,17 +20,15 @@ import rs.raf.pds.v5.z2.gRPC.SellResponse;
 import rs.raf.pds.v5.z2.gRPC.StockData;
 import rs.raf.pds.v5.z2.gRPC.StockExchangeServiceGrpc.StockExchangeServiceImplBase;
 import rs.raf.pds.v5.z2.gRPC.StockRequest;
-import rs.raf.pds.v5.z2.gRPC.TradeDetails;
-import rs.raf.pds.v5.z2.gRPC.TradeNotification;
+
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -77,14 +74,13 @@ public class StockExchangeServer {
     static class StockExchangeServiceImpl extends StockExchangeServiceImplBase {
 
     	
-        private static  StockData[] stockDataArray;
-        private static final Map<StreamObserver<StockData>,List<StockData>> ObserverSymbolMap = new HashMap<>();
-        private static final Map<String, List<BuyRequest>> BuyMap = new HashMap<>();
-        private static final Map<String, List<SellRequest>> SellMap = new HashMap<>();
-        private static final Map<String, StreamObserver<BuyResponse>> BuyObservers = new HashMap<>();
-        private static final Map<String, StreamObserver<SellResponse>> SellObservers = new HashMap<>();
-        private static final Map<String, StockData> SymbolMap = new HashMap<>(); 
-        private static final Map<String, String> clients = new HashMap<>();
+        private static  CopyOnWriteArrayList<StockData> stockDataArray = new CopyOnWriteArrayList<StockData>();
+        private static final ConcurrentMap<StreamObserver<StockData>,CopyOnWriteArrayList<StockData>> ObserverSymbolMap = new ConcurrentHashMap<>();
+        private static final ConcurrentMap<String, CopyOnWriteArrayList<BuyRequest>> BuyMap = new ConcurrentHashMap<>();
+        private static final ConcurrentMap<String, CopyOnWriteArrayList<SellRequest>> SellMap = new ConcurrentHashMap<>();
+        private static final ConcurrentMap<String, StockData> SymbolMap = new ConcurrentHashMap<>(); 
+        private static final ConcurrentMap<String, StreamObserver<GenerateClientIdResponse>> clients = new ConcurrentHashMap<>();
+        private static final ConcurrentMap<String, ConcurrentMap<String, Integer>> clientBalance = new ConcurrentHashMap<>();
         private final AtomicInteger clientIdCounter = new AtomicInteger(1);
 
 
@@ -93,9 +89,10 @@ public class StockExchangeServer {
         	for (StockData data : InitialData.initStocks()) {
         		
         		SymbolMap.put(data.getSymbol(), data);
+        		stockDataArray.add(data);
         		
         	}
-            stockDataArray = InitialData.initStocks();
+           
         }
 
         
@@ -116,9 +113,11 @@ public class StockExchangeServer {
            
         private static void updateStockPrices() {
             Random random = new Random();
+            System.out.println("_-_-_-_-_-_-_-");
             System.out.println(SellMap);
+            System.out.println("*****************");
     		System.out.println(BuyMap);
-
+    	    System.out.println("_-_-_-_-_-_-_-");
             for (String Symbol : SymbolMap.keySet()) {
                 StockData value = SymbolMap.get(Symbol);
                 
@@ -136,14 +135,14 @@ public class StockExchangeServer {
                 SymbolMap.put(Symbol, newStock);
                 
             }                      
-            
-            stockDataArray = SymbolMap.values().toArray(new StockData[0]);
+            stockDataArray = new CopyOnWriteArrayList<StockData>(SymbolMap.values());
+      
             notifyClients(stockDataArray);
         }
 
                       
         
-        private static void notifyClients(StockData[] stockDataArray) {
+        private static void notifyClients(CopyOnWriteArrayList<StockData> stockDataArray) {
             synchronized (observers) {
                 for (StreamObserver<StockData> observer : observers) {
                     List<StockData> followedStocks = ObserverSymbolMap.get(observer);
@@ -175,15 +174,21 @@ public class StockExchangeServer {
         @Override
         public void updateFollowedSymbols(FollowedSymbolsRequest request,StreamObserver<StockData> responseObserver) {
             observers.add(responseObserver);
-
-          
-            List<String> symbolsToFollow = request.getSymbolsList();
-            List<StockData> updatedFollowedStocks = Arrays.stream(stockDataArray)
-                    .filter(stock -> symbolsToFollow.contains(stock.getSymbol()))
-                    .collect(Collectors.toList());
+            
+            CopyOnWriteArrayList<String> symbolsToFollow = new CopyOnWriteArrayList<String>();
+         
 
             
-        	ObserverSymbolMap.put(responseObserver, updatedFollowedStocks);
+             for (String symbol : request.getSymbolsList()) {
+            	 symbolsToFollow.add(symbol);
+             }
+        
+             CopyOnWriteArrayList<StockData> updatedFollowedStocks = stockDataArray.stream()
+            	        .filter(stock -> symbolsToFollow.contains(stock.getSymbol()))
+            	        .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+
+            	ObserverSymbolMap.put(responseObserver, updatedFollowedStocks);
+
             
                   
         }                   
@@ -196,7 +201,7 @@ public class StockExchangeServer {
         	        .filter(entry -> entry.getKey().equals(request.getCompanySymbol()))
         	        .map(Map.Entry::getValue)
         	        .findFirst()
-        	        .orElse(new ArrayList<>());
+        	        .orElse(new CopyOnWriteArrayList<>());
             
             SellOffers.sort(Comparator.comparingDouble(SellRequest::getPricePerShare));
             
@@ -223,9 +228,9 @@ public class StockExchangeServer {
         	        .filter(entry -> entry.getKey().equals(request.getCompanySymbol()))
         	        .map(Map.Entry::getValue)
         	        .findFirst()
-        	        .orElse(new ArrayList<>());
+        	        .orElse(new CopyOnWriteArrayList<>());
             
-            BuyOffers.sort(Comparator.comparingDouble(BuyRequest::getPricePerShare));
+            BuyOffers.sort(Comparator.comparingDouble(BuyRequest::getPricePerShare).reversed());
             
             
             List<BuyRequest> first10Offers = BuyOffers.stream().limit(request.getNumberOfOffers()).collect(Collectors.toList());
@@ -252,19 +257,15 @@ public class StockExchangeServer {
         
         @Override
         public void buy(BuyRequest request, StreamObserver<BuyResponse> responseObserver) {
-           
+               
                    	
-        	List<BuyRequest> BuyList = BuyMap.entrySet().stream()
+        	CopyOnWriteArrayList<BuyRequest> BuyList = BuyMap.entrySet().stream()
         	        .filter(entry -> entry.getKey().equals(request.getCompanySymbol()))
         	        .map(Map.Entry::getValue)
         	        .findFirst()
-        	        .orElse(new ArrayList<>());
+        	        .orElse(new CopyOnWriteArrayList<>());
 
-            
-            
-            if (BuyList == null) {
-            	BuyList = new ArrayList<>();
-            }
+               
 
             BuyList.add(BuyRequest.newBuilder()               
             		.setCompanySymbol(request.getCompanySymbol())
@@ -280,44 +281,48 @@ public class StockExchangeServer {
             		   .setMessage("Your order has been fullfiled")
             		   .build();
             
-            BuyObservers.put(request.getClientId(), responseObserver);
             responseObserver.onNext(buyResp);
-            //responseObserver.onCompleted();
+            responseObserver.onCompleted();
         }
 
         @Override
         public void sell(SellRequest request, StreamObserver<SellResponse> responseObserver) {
         	
-          
+        	if (clientBalance.get(request.getClientId()).get(request.getCompanySymbol()) >= request.getQuantity()) {
+        		CopyOnWriteArrayList<SellRequest> SellList = SellMap.entrySet().stream()
+            	        .filter(entry -> entry.getKey().equals(request.getCompanySymbol()))
+            	        .map(Map.Entry::getValue)
+            	        .findFirst()
+            	        .orElse(new CopyOnWriteArrayList<>());
+                   
+
+                SellList.add(SellRequest.newBuilder()               
+                		.setCompanySymbol(request.getCompanySymbol())
+                        .setPricePerShare(request.getPricePerShare())
+                        .setQuantity(request.getQuantity())
+                        .setClientId(request.getClientId())
+                        .build());
+
+                SellMap.put(request.getCompanySymbol(), SellList);
+                
+                SellResponse sellResp = SellResponse.newBuilder()
+                		   .setSuccess(true)
+                		   .setMessage("Your order has been fullfiled")
+                		   .build();
+                      
+                responseObserver.onNext(sellResp);
+                responseObserver.onCompleted();
+        	} else {
+        		 SellResponse sellResp = SellResponse.newBuilder()
+              		   .setSuccess(false)
+              		   .setMessage("You don't have enough stocks in your client.")
+              		   .build();
+                    
+              responseObserver.onNext(sellResp);
+              responseObserver.onCompleted();
+        	}
         	
-        	List<SellRequest> SellList = SellMap.entrySet().stream()
-        	        .filter(entry -> entry.getKey().equals(request.getCompanySymbol()))
-        	        .map(Map.Entry::getValue)
-        	        .findFirst()
-        	        .orElse(new ArrayList<>());
-            
-            
-            if (SellList == null) {
-            	SellList = new ArrayList<>();
-            }
-
-            SellList.add(SellRequest.newBuilder()               
-            		.setCompanySymbol(request.getCompanySymbol())
-                    .setPricePerShare(request.getPricePerShare())
-                    .setQuantity(request.getQuantity())
-                    .setClientId(request.getClientId())
-                    .build());
-
-            SellMap.put(request.getCompanySymbol(), SellList);
-            
-            SellResponse sellResp = SellResponse.newBuilder()
-            		   .setSuccess(true)
-            		   .setMessage("Your order has been fullfiled")
-            		   .build();
-            
-            SellObservers.put(request.getClientId(), responseObserver);
-            responseObserver.onNext(sellResp);
-            //responseObserver.onCompleted();
+        	        	
         }
         
         
@@ -326,16 +331,25 @@ public class StockExchangeServer {
         public void submitOrder(OrderRequest request, StreamObserver<OrderResponse> responseObserver) {
             System.out.println(request.getBuyOrSell());
         	//submit buy AAPL 99.9 10
+            
+            CopyOnWriteArrayList<SellRequest> sellRequests = SellMap.get(request.getCompanySymbol());
+            CopyOnWriteArrayList<BuyRequest> buyRequests = BuyMap.get(request.getCompanySymbol());
+        	ConcurrentMap<String, Integer> newClientBalance = clientBalance.get(request.getClientId());
+        	int balance = clientBalance.get(request.getClientId()).get(request.getCompanySymbol());
+        	
+    		if(sellRequests == null) {
+    			sellRequests = new CopyOnWriteArrayList<SellRequest>();
+    		}
+    		if(buyRequests == null) {
+    			buyRequests = new CopyOnWriteArrayList<BuyRequest>();
+    		}
+            
         	if (request.getBuyOrSell().equals("buy")) {
         		
-        		
-        		
-        		List<SellRequest> sellRequests = SellMap.get(request.getCompanySymbol());
-        		List<BuyRequest> buyRequests = BuyMap.get(request.getCompanySymbol());
-        		
+        	      		
         		System.out.println(buyRequests);
         		System.out.println(sellRequests);
-        		if (sellRequests != null) {
+    								
  		        for (SellRequest sr : sellRequests ) {
  		        	
  		        	if(!request.getClientId().equals(sr.getClientId()) && request.getPricePerShare() == (sr.getPricePerShare())) {
@@ -353,23 +367,25 @@ public class StockExchangeServer {
  		        			sellRequests.set(sellRequests.indexOf(sr), newOrder);
  		        			
  		        			///////////NOTIFY
- 		        			BuyResponse b = BuyResponse.newBuilder()
+ 		        			GenerateClientIdResponse b = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + request.getCompanySymbol() + request.getPricePerShare() + request.getQuantity())
- 		        					.setSuccess(true)
  		        					.build();
  		        			
- 		        			StreamObserver<BuyResponse> buyObserver = BuyObservers.get(request.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> buyObserver = clients.get(request.getClientId());
  		        			
  		        			buyObserver.onNext(b);
  		        			
- 		        			SellResponse s = SellResponse.newBuilder()
+ 		        			GenerateClientIdResponse s = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + sr.getCompanySymbol() + sr.getPricePerShare() + newQuantity)
- 		        					.setSuccess(true)
  		        					.build();
  		        			
- 		        			StreamObserver<SellResponse> sellObserver = SellObservers.get(sr.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> sellObserver = clients.get(sr.getClientId());
  		        			
  		        			sellObserver.onNext(s);
+ 		        			
+ 		        			
+ 		        			////BALANCE
+ 		        			balance = balance + request.getQuantity();
  		        			
  		        		} else if (request.getQuantity() > sr.getQuantity()){
  		        			int newQuantity = request.getQuantity() - sr.getQuantity();
@@ -383,66 +399,61 @@ public class StockExchangeServer {
  		        			sellRequests.remove(sr);
  		        			//notifty
  		        			
- 		        			BuyResponse b = BuyResponse.newBuilder()
+ 		        			GenerateClientIdResponse b = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + request.getCompanySymbol() + request.getPricePerShare() + newQuantity)
- 		        					.setSuccess(true)
  		        					.build();
  		        			
- 		        			StreamObserver<BuyResponse> buyObserver = BuyObservers.get(request.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> buyObserver = clients.get(request.getClientId());
  		        			
  		        			buyObserver.onNext(b);
  		        			
- 		        			SellResponse s = SellResponse.newBuilder()
+ 		        			GenerateClientIdResponse s = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + sr.getCompanySymbol() + sr.getPricePerShare() + sr.getQuantity())
- 		        					.setSuccess(true)
  		        					.build();
  		        			
- 		        			StreamObserver<SellResponse> sellObserver = SellObservers.get(sr.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> sellObserver = clients.get(sr.getClientId());
  		        			
  		        			sellObserver.onNext(s);
  		        			
- 		        			
+ 		        			balance = balance + sr.getQuantity();
  		        			
  		        		} else {
  		        			sellRequests.remove(sr);
  		        			//notify
  		        			
- 		        			BuyResponse b = BuyResponse.newBuilder()
+ 		        			GenerateClientIdResponse b = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + request.getCompanySymbol() + request.getPricePerShare() + request.getQuantity())
- 		        					.setSuccess(true)
- 		        					.build();
+ 		        					.build();	
  		        			
- 		        			StreamObserver<BuyResponse> buyObserver = BuyObservers.get(request.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> buyObserver = clients.get(request.getClientId());
  		        			
  		        			buyObserver.onNext(b);
  		        			
- 		        			SellResponse s = SellResponse.newBuilder()
+ 		        			GenerateClientIdResponse s = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + sr.getCompanySymbol() + sr.getPricePerShare() + sr.getQuantity())
- 		        					.setSuccess(true)
  		        					.build();
  		        			
- 		        			StreamObserver<SellResponse> sellObserver = SellObservers.get(sr.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> sellObserver = clients.get(sr.getClientId());
  		        			
  		        			sellObserver.onNext(s);
  		        			
+ 		        			balance = balance + request.getQuantity();
  		        		}
  		        		
  		        	}
  		        	
- 		        }}
- 		       SellMap.put(request.getCompanySymbol(), sellRequests);
-        		
-        	}
-        	if (request.getBuyOrSell().equals("sell")) {
-        		
-        		
-        		List<SellRequest> sellRequests = SellMap.get(request.getCompanySymbol());
-        		List<BuyRequest> buyRequests = BuyMap.get(request.getCompanySymbol());
+ 		        }  
+				
+        	}       
+        	//submit sell AAPL 50 100
+        	
+        	if (request.getBuyOrSell().equals("sell") && newClientBalance.get(request.getCompanySymbol()) >= request.getQuantity()) {
+        		        		
         		System.out.println(buyRequests);
         		System.out.println(sellRequests);
         		
-        		if (buyRequests != null) {
- 		        for (BuyRequest br : buyRequests ) {
+        	 if (balance > request.getQuantity()) {
+        		for (BuyRequest br : buyRequests ) {
  		        	
  		        	if(!request.getClientId().equals(br.getClientId()) && request.getPricePerShare() == (br.getPricePerShare())) {
  		        		
@@ -460,25 +471,24 @@ public class StockExchangeServer {
  		        			
  		        			//notifyTrade()
  		        			
- 		        			BuyResponse b = BuyResponse.newBuilder()
+ 		        			GenerateClientIdResponse a = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + br.getCompanySymbol() + br.getPricePerShare() + newQuantity)
- 		        					.setSuccess(true)
  		        					.build();
  		        			
- 		        			StreamObserver<BuyResponse> buyObserver = BuyObservers.get(br.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> buyObserver = clients.get(br.getClientId());
  		        			
- 		        			buyObserver.onNext(b);
+ 		        			buyObserver.onNext(a);
  		        			
- 		        			SellResponse s = SellResponse.newBuilder()
+ 		        			GenerateClientIdResponse b = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + request.getCompanySymbol() + request.getPricePerShare() + request.getQuantity())
- 		        					.setSuccess(true)
- 		        					.build();
+ 		        					.build();		    
  		        			
- 		        			StreamObserver<SellResponse> sellObserver = SellObservers.get(request.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> sellObserver = clients.get(request.getClientId());
  		        			
- 		        			sellObserver.onNext(s);
+ 		        			sellObserver.onNext(b);
  		        			
- 		        			 	
+ 		        			balance = balance  - request.getQuantity();
+ 		        			
  		        		} else if (request.getQuantity() > br.getQuantity()){
  		        			int newQuantity = request.getQuantity() - br.getQuantity();
 		        			SellRequest newOrder = SellRequest.newBuilder()
@@ -490,75 +500,95 @@ public class StockExchangeServer {
 							sellRequests.add(newOrder);
  		        			buyRequests.remove(br);
  		        			//notifty
- 		        			BuyResponse b = BuyResponse.newBuilder()
+ 		        			GenerateClientIdResponse b = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + br.getCompanySymbol() + br.getPricePerShare() + br.getQuantity())
- 		        					.setSuccess(true)
- 		        					.build();
+ 		        					.build();	
  		        			
- 		        			StreamObserver<BuyResponse> buyObserver = BuyObservers.get(br.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> buyObserver = clients.get(br.getClientId());
  		        			
  		        			buyObserver.onNext(b);
  		        			
- 		        			SellResponse s = SellResponse.newBuilder()
+ 		        			GenerateClientIdResponse a = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + request.getCompanySymbol() + request.getPricePerShare() + newQuantity)
- 		        					.setSuccess(true)
  		        					.build();
  		        			
- 		        			StreamObserver<SellResponse> sellObserver = SellObservers.get(request.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> sellObserver = clients.get(request.getClientId());
  		        			
- 		        			sellObserver.onNext(s);
+ 		        			sellObserver.onNext(a);
  		        			
- 		        			
+ 		        			balance = balance - br.getQuantity();
  		        			
  		        		} else {
  		        			buyRequests.remove(br);
  		        			//notify
- 		        			BuyResponse b = BuyResponse.newBuilder()
+ 		        			GenerateClientIdResponse b = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + br.getCompanySymbol() + br.getPricePerShare() + br.getQuantity())
- 		        					.setSuccess(true)
  		        					.build();
  		        			
- 		        			StreamObserver<BuyResponse> buyObserver = BuyObservers.get(br.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> buyObserver = clients.get(br.getClientId());
  		        			
  		        			buyObserver.onNext(b);
  		        			
- 		        			SellResponse s = SellResponse.newBuilder()
+ 		        			GenerateClientIdResponse s = GenerateClientIdResponse.newBuilder()
  		        					.setMessage("Your transaction is completed." + request.getCompanySymbol() + request.getPricePerShare() + request.getQuantity())
- 		        					.setSuccess(true)
- 		        					.build();
+ 		        					.build();	
  		        			
- 		        			StreamObserver<SellResponse> sellObserver = SellObservers.get(request.getClientId());
+ 		        			StreamObserver<GenerateClientIdResponse> sellObserver = clients.get(request.getClientId());
  		        			
  		        			sellObserver.onNext(s);
+ 		        			balance = balance - br.getQuantity();
  		        		}
  		        		
  		        	}
  		        	
- 		        }}
- 		       BuyMap.put(request.getCompanySymbol(), buyRequests);
-        		
-        	
-        	 
+ 		        }        		        	       
+        	}}else {
+        		GenerateClientIdResponse poruka = GenerateClientIdResponse.newBuilder()
+     					.setMessage("You don't have enough balance for this transaction")
+     					.build();
+     			
+     			StreamObserver<GenerateClientIdResponse> pk = clients.get(request.getClientId());
+     			
+     			pk.onNext(poruka);
         	}
+        	System.out.println(balance);
+        	SellMap.put(request.getCompanySymbol(), sellRequests);
+        	BuyMap.put(request.getCompanySymbol(), buyRequests);
+			/////////////////////////////////////////UPDATING BALANCE OF THE CLIENT//////////////////////
+			newClientBalance.put(request.getCompanySymbol(), balance);
+			
+			clientBalance.put(request.getClientId(), newClientBalance);
+			/////////////////////////////////////////UPDATING BALANCE OF THE CLIENT//////////////////////
             //responseObserver.onCompleted();
         }
         
-        
-        
-      
         
         
         @Override
         public void generateClientId(GenerateClientIdRequest request, StreamObserver<GenerateClientIdResponse> responseObserver) {
           
             String clientId = "Client" + clientIdCounter.getAndIncrement();
+            int initCb = 1000;
             
+        
             GenerateClientIdResponse response = GenerateClientIdResponse.newBuilder()
                     .setClientId(clientId)
+                    .setBalance(initCb)
                     .build();
+            
+            ConcurrentMap<String, Integer> copyMap = new ConcurrentHashMap<>();
 
+          
+            for (String symbol : SymbolMap.keySet()) {
+                       
+            	copyMap.put(symbol,initCb);                 
+            }
+                         
+            clientBalance.put(clientId, copyMap);
+            clients.put(clientId, responseObserver);
+            
             responseObserver.onNext(response);
-            responseObserver.onCompleted();
+            //responseObserver.onCompleted();
         }
 
           

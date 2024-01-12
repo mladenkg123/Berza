@@ -252,38 +252,6 @@ public final class StockExchangeServiceGrpc {
      return getSubmitOrderMethod;
   }
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  @java.lang.Deprecated // Use {@link #getNotifyTradeMethod()} instead. 
-  public static final io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.TradeNotification,
-      rs.raf.pds.v5.z2.gRPC.TradeDetails> METHOD_NOTIFY_TRADE = getNotifyTradeMethod();
-
-  private static volatile io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.TradeNotification,
-      rs.raf.pds.v5.z2.gRPC.TradeDetails> getNotifyTradeMethod;
-
-  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.TradeNotification,
-      rs.raf.pds.v5.z2.gRPC.TradeDetails> getNotifyTradeMethod() {
-    io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.TradeNotification, rs.raf.pds.v5.z2.gRPC.TradeDetails> getNotifyTradeMethod;
-    if ((getNotifyTradeMethod = StockExchangeServiceGrpc.getNotifyTradeMethod) == null) {
-      synchronized (StockExchangeServiceGrpc.class) {
-        if ((getNotifyTradeMethod = StockExchangeServiceGrpc.getNotifyTradeMethod) == null) {
-          StockExchangeServiceGrpc.getNotifyTradeMethod = getNotifyTradeMethod = 
-              io.grpc.MethodDescriptor.<rs.raf.pds.v5.z2.gRPC.TradeNotification, rs.raf.pds.v5.z2.gRPC.TradeDetails>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
-              .setFullMethodName(generateFullMethodName(
-                  "StockExchangeService", "notifyTrade"))
-              .setSampledToLocalTracing(true)
-              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  rs.raf.pds.v5.z2.gRPC.TradeNotification.getDefaultInstance()))
-              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  rs.raf.pds.v5.z2.gRPC.TradeDetails.getDefaultInstance()))
-                  .setSchemaDescriptor(new StockExchangeServiceMethodDescriptorSupplier("notifyTrade"))
-                  .build();
-          }
-        }
-     }
-     return getNotifyTradeMethod;
-  }
-  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
   @java.lang.Deprecated // Use {@link #getGenerateClientIdMethod()} instead. 
   public static final io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest,
       rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse> METHOD_GENERATE_CLIENT_ID = getGenerateClientIdMethod();
@@ -300,7 +268,7 @@ public final class StockExchangeServiceGrpc {
         if ((getGenerateClientIdMethod = StockExchangeServiceGrpc.getGenerateClientIdMethod) == null) {
           StockExchangeServiceGrpc.getGenerateClientIdMethod = getGenerateClientIdMethod = 
               io.grpc.MethodDescriptor.<rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest, rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse>newBuilder()
-              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
               .setFullMethodName(generateFullMethodName(
                   "StockExchangeService", "generateClientId"))
               .setSampledToLocalTracing(true)
@@ -394,13 +362,6 @@ public final class StockExchangeServiceGrpc {
 
     /**
      */
-    public void notifyTrade(rs.raf.pds.v5.z2.gRPC.TradeNotification request,
-        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.TradeDetails> responseObserver) {
-      asyncUnimplementedUnaryCall(getNotifyTradeMethod(), responseObserver);
-    }
-
-    /**
-     */
     public void generateClientId(rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest request,
         io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse> responseObserver) {
       asyncUnimplementedUnaryCall(getGenerateClientIdMethod(), responseObserver);
@@ -458,15 +419,8 @@ public final class StockExchangeServiceGrpc {
                 rs.raf.pds.v5.z2.gRPC.OrderResponse>(
                   this, METHODID_SUBMIT_ORDER)))
           .addMethod(
-            getNotifyTradeMethod(),
-            asyncServerStreamingCall(
-              new MethodHandlers<
-                rs.raf.pds.v5.z2.gRPC.TradeNotification,
-                rs.raf.pds.v5.z2.gRPC.TradeDetails>(
-                  this, METHODID_NOTIFY_TRADE)))
-          .addMethod(
             getGenerateClientIdMethod(),
-            asyncUnaryCall(
+            asyncServerStreamingCall(
               new MethodHandlers<
                 rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest,
                 rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse>(
@@ -551,17 +505,9 @@ public final class StockExchangeServiceGrpc {
 
     /**
      */
-    public void notifyTrade(rs.raf.pds.v5.z2.gRPC.TradeNotification request,
-        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.TradeDetails> responseObserver) {
-      asyncServerStreamingCall(
-          getChannel().newCall(getNotifyTradeMethod(), getCallOptions()), request, responseObserver);
-    }
-
-    /**
-     */
     public void generateClientId(rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest request,
         io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse> responseObserver) {
-      asyncUnaryCall(
+      asyncServerStreamingCall(
           getChannel().newCall(getGenerateClientIdMethod(), getCallOptions()), request, responseObserver);
     }
   }
@@ -639,16 +585,9 @@ public final class StockExchangeServiceGrpc {
 
     /**
      */
-    public java.util.Iterator<rs.raf.pds.v5.z2.gRPC.TradeDetails> notifyTrade(
-        rs.raf.pds.v5.z2.gRPC.TradeNotification request) {
+    public java.util.Iterator<rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse> generateClientId(
+        rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest request) {
       return blockingServerStreamingCall(
-          getChannel(), getNotifyTradeMethod(), getCallOptions(), request);
-    }
-
-    /**
-     */
-    public rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse generateClientId(rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest request) {
-      return blockingUnaryCall(
           getChannel(), getGenerateClientIdMethod(), getCallOptions(), request);
     }
   }
@@ -694,14 +633,6 @@ public final class StockExchangeServiceGrpc {
       return futureUnaryCall(
           getChannel().newCall(getSubmitOrderMethod(), getCallOptions()), request);
     }
-
-    /**
-     */
-    public com.google.common.util.concurrent.ListenableFuture<rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse> generateClientId(
-        rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest request) {
-      return futureUnaryCall(
-          getChannel().newCall(getGenerateClientIdMethod(), getCallOptions()), request);
-    }
   }
 
   private static final int METHODID_GET_STOCK_DATA = 0;
@@ -711,8 +642,7 @@ public final class StockExchangeServiceGrpc {
   private static final int METHODID_BUY = 4;
   private static final int METHODID_SELL = 5;
   private static final int METHODID_SUBMIT_ORDER = 6;
-  private static final int METHODID_NOTIFY_TRADE = 7;
-  private static final int METHODID_GENERATE_CLIENT_ID = 8;
+  private static final int METHODID_GENERATE_CLIENT_ID = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -758,10 +688,6 @@ public final class StockExchangeServiceGrpc {
         case METHODID_SUBMIT_ORDER:
           serviceImpl.submitOrder((rs.raf.pds.v5.z2.gRPC.OrderRequest) request,
               (io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.OrderResponse>) responseObserver);
-          break;
-        case METHODID_NOTIFY_TRADE:
-          serviceImpl.notifyTrade((rs.raf.pds.v5.z2.gRPC.TradeNotification) request,
-              (io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.TradeDetails>) responseObserver);
           break;
         case METHODID_GENERATE_CLIENT_ID:
           serviceImpl.generateClientId((rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest) request,
@@ -835,7 +761,6 @@ public final class StockExchangeServiceGrpc {
               .addMethod(getBuyMethod())
               .addMethod(getSellMethod())
               .addMethod(getSubmitOrderMethod())
-              .addMethod(getNotifyTradeMethod())
               .addMethod(getGenerateClientIdMethod())
               .build();
         }
