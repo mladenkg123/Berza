@@ -2,13 +2,19 @@ package rs.raf.pds.v5.z2;
 
 import io.grpc.Server;
 
+
+
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import rs.raf.pds.v5.z2.gRPC.AskRequest;
 import rs.raf.pds.v5.z2.gRPC.BidRequest;
 import rs.raf.pds.v5.z2.gRPC.BuyOffer;
 import rs.raf.pds.v5.z2.gRPC.BuyRequest;
 import rs.raf.pds.v5.z2.gRPC.BuyResponse;
+import rs.raf.pds.v5.z2.gRPC.CompanySharesRequest;
 import rs.raf.pds.v5.z2.gRPC.FollowedSymbolsRequest;
 import rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest;
 import rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse;
@@ -20,16 +26,25 @@ import rs.raf.pds.v5.z2.gRPC.SellResponse;
 import rs.raf.pds.v5.z2.gRPC.StockData;
 import rs.raf.pds.v5.z2.gRPC.StockExchangeServiceGrpc.StockExchangeServiceImplBase;
 import rs.raf.pds.v5.z2.gRPC.StockRequest;
+import rs.raf.pds.v5.z2.gRPC.TradingTransaction;
 
-
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -43,23 +58,78 @@ public class StockExchangeServer {
         System.out.println("StockExchangeServer started on port 8090");
         
         startSimulationThread();
-
+        startTcpServer();
+        startTransactionLogThread();
        
         server.awaitTermination();
     }
     
-   
-    private static final CopyOnWriteArrayList<StreamObserver<StockData>> observers = new CopyOnWriteArrayList<>();
+    private static void startTcpServer() {
+        new Thread(() -> {
+            try (ServerSocket serverSocket = new ServerSocket(8080)) {
+                System.out.println("TCP Server started on port 8080");
+                while (true) {
+                    Socket clientSocket = serverSocket.accept();
+                    new Thread(() -> handleTcpConnection(clientSocket)).start();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
     
+    private static void handleTcpConnection(Socket clientSocket) {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
+
+            String clientMessage;
+            while ((clientMessage = in.readLine()) != null) {
+                System.out.println("Received from client: " + clientMessage);
+
+                String response = ("Response");
+           
+                out.println(response);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    private static final CopyOnWriteArrayList<StreamObserver<StockData>> observers = new CopyOnWriteArrayList<>();
+    private static final String TRANSACTION_LOG_FILE = "transaction_log.txt";
+        
     private static void startSimulationThread() {
         new Thread(() -> {
             try {
                 while (true) {
                 	//System.out.println(observers.size());
                     StockExchangeServiceImpl.updateStockPrices();
-                    Thread.sleep(5000);
+                    Thread.sleep(20000);
                 }
             } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private static void startTransactionLogThread() {
+        new Thread(() -> {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(TRANSACTION_LOG_FILE, true))) {
+                while (true) {
+                    if (!transactionQueue.isEmpty()) {
+                        //.take()
+                        Transaction transaction = transactionQueue.poll();
+                        while (transaction != null) {
+                            writer.write(transaction.toString());
+                            writer.newLine();
+                            transaction = transactionQueue.poll();
+                        }
+                        writer.flush();
+                    }
+                    Thread.sleep(50000); 
+                }
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }).start();
@@ -336,7 +406,12 @@ public class StockExchangeServer {
             CopyOnWriteArrayList<BuyRequest> buyRequests = BuyMap.get(request.getCompanySymbol());
         	ConcurrentMap<String, Integer> newClientBalance = clientBalance.get(request.getClientId());
         	int balance = clientBalance.get(request.getClientId()).get(request.getCompanySymbol());
-        	
+        	LocalDate currentDate = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+            String formattedDate = currentDate.format(formatter);
+            
+            System.out.println(formattedDate);
+
     		if(sellRequests == null) {
     			sellRequests = new CopyOnWriteArrayList<SellRequest>();
     		}
@@ -386,6 +461,8 @@ public class StockExchangeServer {
  		        			
  		        			////BALANCE
  		        			balance = balance + request.getQuantity();
+ 		        			//Transaction u txt
+ 		        			logTransaction(new Transaction(request.getClientId(), sr.getClientId(), request.getCompanySymbol(), request.getPricePerShare(), request.getQuantity(),formattedDate));
  		        			
  		        		} else if (request.getQuantity() > sr.getQuantity()){
  		        			int newQuantity = request.getQuantity() - sr.getQuantity();
@@ -417,6 +494,8 @@ public class StockExchangeServer {
  		        			
  		        			balance = balance + sr.getQuantity();
  		        			
+ 		                    logTransaction(new Transaction(request.getClientId(), sr.getClientId(), request.getCompanySymbol(), request.getPricePerShare(), request.getQuantity(),formattedDate));
+
  		        		} else {
  		        			sellRequests.remove(sr);
  		        			//notify
@@ -438,6 +517,8 @@ public class StockExchangeServer {
  		        			sellObserver.onNext(s);
  		        			
  		        			balance = balance + request.getQuantity();
+ 		                    logTransaction(new Transaction(request.getClientId(), sr.getClientId(), request.getCompanySymbol(), request.getPricePerShare(), request.getQuantity(),formattedDate));
+
  		        		}
  		        		
  		        	}
@@ -488,6 +569,8 @@ public class StockExchangeServer {
  		        			sellObserver.onNext(b);
  		        			
  		        			balance = balance  - request.getQuantity();
+ 	                        logTransaction(new Transaction(br.getClientId(), request.getClientId(), request.getCompanySymbol(), request.getPricePerShare(), request.getQuantity(),formattedDate));
+
  		        			
  		        		} else if (request.getQuantity() > br.getQuantity()){
  		        			int newQuantity = request.getQuantity() - br.getQuantity();
@@ -517,6 +600,8 @@ public class StockExchangeServer {
  		        			sellObserver.onNext(a);
  		        			
  		        			balance = balance - br.getQuantity();
+ 	                        logTransaction(new Transaction(br.getClientId(), request.getClientId(), request.getCompanySymbol(), request.getPricePerShare(), request.getQuantity(),formattedDate));
+
  		        			
  		        		} else {
  		        			buyRequests.remove(br);
@@ -537,6 +622,7 @@ public class StockExchangeServer {
  		        			
  		        			sellObserver.onNext(s);
  		        			balance = balance - br.getQuantity();
+ 	                        logTransaction(new Transaction(br.getClientId(), request.getClientId(), request.getCompanySymbol(), request.getPricePerShare(), request.getQuantity(),formattedDate));
  		        		}
  		        		
  		        	}
@@ -590,13 +676,92 @@ public class StockExchangeServer {
             responseObserver.onNext(response);
             //responseObserver.onCompleted();
         }
-
-          
-       
         
+        
+       
+        public void getCompanyShares(CompanySharesRequest request, StreamObserver<TradingTransaction> responseObserver) {
+            String companySymbol = request.getCompanySymbol();
+            String date = request.getDate();
+       
+            System.out.println(date + "AAAAA");
+            for (Transaction transaction : transactionList) {
+                if (transaction.getCompanySymbol().equals(companySymbol) && transaction.getDate().equals(date)) {
+                    TradingTransaction tradingTransaction = TradingTransaction.newBuilder()
+                            .setBuyerClientId(transaction.getClientId1())
+                            .setSellerClientId(transaction.getClientId2())
+                            .setCompanySymbol(transaction.getCompanySymbol())
+                            .setPricePerShare(transaction.getPricePerShare())
+                            .setQuantity(transaction.getQuantity())
+                            .setDate(transaction.getDate())
+                            .build();
+
+                    responseObserver.onNext(tradingTransaction);
+                }
+            }
+
+            responseObserver.onCompleted();
+        }
+
+                       
  }
+    private static final BlockingQueue<Transaction> transactionQueue = new LinkedBlockingQueue<>();
+    private static final CopyOnWriteArrayList<Transaction> transactionList = new CopyOnWriteArrayList<>();
 
+    public static void logTransaction(Transaction transaction) {
+        try {
+            transactionQueue.put(transaction);
+            transactionList.add(transaction);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    static class Transaction {
+        private final String clientId1;
+        private final String clientId2;
+        private final String companySymbol;
+        private final double pricePerShare;
+        private final int quantity;
+        private final String date;
+
+        public Transaction(String clientId1, String clientId2, String companySymbol, double pricePerShare, int quantity, String date) {
+            this.clientId1 = clientId1;
+            this.clientId2 = clientId2;
+            this.companySymbol = companySymbol;
+            this.pricePerShare = pricePerShare;
+            this.quantity = quantity;
+            this.date = date;
+        }
         
-       
+        public String getClientId1() {
+            return clientId1;
+        }
+        public String getClientId2() {
+            return clientId2;
+        }
+
+
+        public String getCompanySymbol() {
+            return companySymbol;
+        }
+   
+        public double getPricePerShare() {
+            return pricePerShare;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public String getDate() {
+            return date;
+        }
+        @Override
+        public String toString() {
+            return String.format("Transaction: %s %s %s %.2f %d %s", companySymbol, clientId1, clientId2, pricePerShare, quantity, date);
+        }
+    }
+ 
       
 }

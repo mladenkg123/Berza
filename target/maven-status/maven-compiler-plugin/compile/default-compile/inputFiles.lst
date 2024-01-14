@@ -5,6 +5,7 @@ C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\BuyOffer
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\BidRequest.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\OrderResponseOrBuilder.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\SellOffer.java
+C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\TradingTransaction.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\StockRequest.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\BuyResponse.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\InitialData.java
@@ -18,9 +19,11 @@ C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\OrderRes
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\SellResponseOrBuilder.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\AskRequest.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\BuyOffer.java
+C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\CompanySharesRequest.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\OrderRequestOrBuilder.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\BidRequestOrBuilder.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\GenerateClientIdRequestOrBuilder.java
+C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\CompanySharesRequestOrBuilder.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\AskRequestOrBuilder.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\FollowedSymbolsRequestOrBuilder.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\SellRequest.java
@@ -28,6 +31,7 @@ C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\SellRequ
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\GenerateClientIdResponseOrBuilder.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\SellResponse.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\StockData.java
+C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\TradingTransactionOrBuilder.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\StockExchangeServiceGrpc.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\BuyResponseOrBuilder.java
 C:\Users\Mladen\Desktop\PADOM-Berza\src\main\java\rs\raf\pds\v5\z2\gRPC\OrderRequest.java

@@ -283,6 +283,38 @@ public final class StockExchangeServiceGrpc {
      }
      return getGenerateClientIdMethod;
   }
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  @java.lang.Deprecated // Use {@link #getGetCompanySharesMethod()} instead. 
+  public static final io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.CompanySharesRequest,
+      rs.raf.pds.v5.z2.gRPC.TradingTransaction> METHOD_GET_COMPANY_SHARES = getGetCompanySharesMethod();
+
+  private static volatile io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.CompanySharesRequest,
+      rs.raf.pds.v5.z2.gRPC.TradingTransaction> getGetCompanySharesMethod;
+
+  @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
+  public static io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.CompanySharesRequest,
+      rs.raf.pds.v5.z2.gRPC.TradingTransaction> getGetCompanySharesMethod() {
+    io.grpc.MethodDescriptor<rs.raf.pds.v5.z2.gRPC.CompanySharesRequest, rs.raf.pds.v5.z2.gRPC.TradingTransaction> getGetCompanySharesMethod;
+    if ((getGetCompanySharesMethod = StockExchangeServiceGrpc.getGetCompanySharesMethod) == null) {
+      synchronized (StockExchangeServiceGrpc.class) {
+        if ((getGetCompanySharesMethod = StockExchangeServiceGrpc.getGetCompanySharesMethod) == null) {
+          StockExchangeServiceGrpc.getGetCompanySharesMethod = getGetCompanySharesMethod = 
+              io.grpc.MethodDescriptor.<rs.raf.pds.v5.z2.gRPC.CompanySharesRequest, rs.raf.pds.v5.z2.gRPC.TradingTransaction>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.SERVER_STREAMING)
+              .setFullMethodName(generateFullMethodName(
+                  "StockExchangeService", "getCompanyShares"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  rs.raf.pds.v5.z2.gRPC.CompanySharesRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  rs.raf.pds.v5.z2.gRPC.TradingTransaction.getDefaultInstance()))
+                  .setSchemaDescriptor(new StockExchangeServiceMethodDescriptorSupplier("getCompanyShares"))
+                  .build();
+          }
+        }
+     }
+     return getGetCompanySharesMethod;
+  }
 
   /**
    * Creates a new async stub that supports all call types for the service
@@ -367,6 +399,13 @@ public final class StockExchangeServiceGrpc {
       asyncUnimplementedUnaryCall(getGenerateClientIdMethod(), responseObserver);
     }
 
+    /**
+     */
+    public void getCompanyShares(rs.raf.pds.v5.z2.gRPC.CompanySharesRequest request,
+        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.TradingTransaction> responseObserver) {
+      asyncUnimplementedUnaryCall(getGetCompanySharesMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -425,6 +464,13 @@ public final class StockExchangeServiceGrpc {
                 rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest,
                 rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse>(
                   this, METHODID_GENERATE_CLIENT_ID)))
+          .addMethod(
+            getGetCompanySharesMethod(),
+            asyncServerStreamingCall(
+              new MethodHandlers<
+                rs.raf.pds.v5.z2.gRPC.CompanySharesRequest,
+                rs.raf.pds.v5.z2.gRPC.TradingTransaction>(
+                  this, METHODID_GET_COMPANY_SHARES)))
           .build();
     }
   }
@@ -510,6 +556,14 @@ public final class StockExchangeServiceGrpc {
       asyncServerStreamingCall(
           getChannel().newCall(getGenerateClientIdMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     */
+    public void getCompanyShares(rs.raf.pds.v5.z2.gRPC.CompanySharesRequest request,
+        io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.TradingTransaction> responseObserver) {
+      asyncServerStreamingCall(
+          getChannel().newCall(getGetCompanySharesMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -590,6 +644,14 @@ public final class StockExchangeServiceGrpc {
       return blockingServerStreamingCall(
           getChannel(), getGenerateClientIdMethod(), getCallOptions(), request);
     }
+
+    /**
+     */
+    public java.util.Iterator<rs.raf.pds.v5.z2.gRPC.TradingTransaction> getCompanyShares(
+        rs.raf.pds.v5.z2.gRPC.CompanySharesRequest request) {
+      return blockingServerStreamingCall(
+          getChannel(), getGetCompanySharesMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -643,6 +705,7 @@ public final class StockExchangeServiceGrpc {
   private static final int METHODID_SELL = 5;
   private static final int METHODID_SUBMIT_ORDER = 6;
   private static final int METHODID_GENERATE_CLIENT_ID = 7;
+  private static final int METHODID_GET_COMPANY_SHARES = 8;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -692,6 +755,10 @@ public final class StockExchangeServiceGrpc {
         case METHODID_GENERATE_CLIENT_ID:
           serviceImpl.generateClientId((rs.raf.pds.v5.z2.gRPC.GenerateClientIdRequest) request,
               (io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.GenerateClientIdResponse>) responseObserver);
+          break;
+        case METHODID_GET_COMPANY_SHARES:
+          serviceImpl.getCompanyShares((rs.raf.pds.v5.z2.gRPC.CompanySharesRequest) request,
+              (io.grpc.stub.StreamObserver<rs.raf.pds.v5.z2.gRPC.TradingTransaction>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -762,6 +829,7 @@ public final class StockExchangeServiceGrpc {
               .addMethod(getSellMethod())
               .addMethod(getSubmitOrderMethod())
               .addMethod(getGenerateClientIdMethod())
+              .addMethod(getGetCompanySharesMethod())
               .build();
         }
       }

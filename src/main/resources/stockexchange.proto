@@ -23,6 +23,8 @@ service StockExchangeService {
         
     rpc generateClientId(GenerateClientIdRequest) returns (stream GenerateClientIdResponse) {}
     
+    rpc getCompanyShares(CompanySharesRequest) returns (stream TradingTransaction) {}
+    
     
 }
 
@@ -113,4 +115,16 @@ message GenerateClientIdResponse {
 }
 
 
+message CompanySharesRequest {
+    string companySymbol = 1;
+    string date = 2; 
+}
 
+message TradingTransaction {
+    string buyerClientId = 1;
+    string sellerClientId = 2;
+    string companySymbol = 3;
+    double pricePerShare = 4;
+    int32 quantity = 5;
+    string date = 6;
+}
