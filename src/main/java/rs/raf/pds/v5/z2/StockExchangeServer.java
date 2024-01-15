@@ -104,11 +104,6 @@ public class StockExchangeServer {
         }).start();
     }
 
-   
-
-    
-    
-    
 
     static class StockExchangeServiceImpl extends StockExchangeServiceImplBase {
 
@@ -165,27 +160,50 @@ public class StockExchangeServer {
                     System.out.println("Received from client: " + clientMessage);
                
                     if (message.length > 0 && message != null) {
-                    	String action = message[0];
-                    	String symbol = message[1];
-                    	double price = Double.parseDouble(message[2]);
-                    	int quantity = Integer.parseInt(message[3]);
-                    	     
-                    	if (action == "buy") {
-                    		BuyRequest request1 = BuyRequest.newBuilder()
+                    	String action = message[0].trim();                   
+                    	if (action.equals("/submit")) {
+                    		System.out.println("A");
+                    		String buyOrSell = message[1];
+                        	String symbol = message[2];                     
+                        	double price = Double.parseDouble(message[3]);
+                        	int quantity = Integer.parseInt(message[4]);
+                        	String clientId = message[5];
+                        	OrderRequest orderRequest = OrderRequest.newBuilder()
+                        			.setBuyOrSell(buyOrSell)
                         			.setCompanySymbol(symbol)
                         			.setPricePerShare(price)
                         			.setQuantity(quantity)
+                        			.setClientId(clientId)
+                        			.build();
+                        	submitOrderFunc(orderRequest);
+                    	} else if (action.equals("/buy")) {
+                    		System.out.println("B");
+                    		String symbol = message[1];
+                        	double price = Double.parseDouble(message[2]);
+                        	int quantity = Integer.parseInt(message[3]);
+                        	String clientId = message[4];
+                        	BuyRequest request1 = BuyRequest.newBuilder()
+                        			.setCompanySymbol(symbol)
+                        			.setPricePerShare(price)
+                        			.setQuantity(quantity)
+                        			.setClientId(clientId)
                         			.build();
                     		doBuyAction(request1);
-                    	} else if (action == "sell") {
+                    	} else if (action.equals("/sell")) {
+                    		System.out.println("C");
+                    		String symbol = message[1];
+                        	double price = Double.parseDouble(message[2]);
+                        	int quantity = Integer.parseInt(message[3]);
+                        	String clientId = message[4];
                     		SellRequest request2 = SellRequest.newBuilder()
                     				.setCompanySymbol(symbol)
                         			.setPricePerShare(price)
                         			.setQuantity(quantity)
+                        			.setClientId(clientId)
                         			.build();
                     		doSellAction(request2);
                     	}
-                    	                  
+                    	             	                                	                  
                     }       
                     String response = ("Response");
                
@@ -385,6 +403,7 @@ public class StockExchangeServer {
                     .build());
 
             BuyMap.put(request.getCompanySymbol(), BuyList);    	
+            System.out.println("NESTOOO1");
         }
 
         @Override
@@ -430,17 +449,22 @@ public class StockExchangeServer {
                     .build());
 
             SellMap.put(request.getCompanySymbol(), SellList);
+            System.out.println("NESTOOO2");
         }
         
         @Override
         public void submitOrder(OrderRequest request, StreamObserver<OrderResponse> responseObserver) {
-            System.out.println(request.getBuyOrSell());
+        	submitOrderFunc(request);
+        }
+        public void submitOrderFunc(OrderRequest request) {
+        	System.out.println(request.getBuyOrSell());
         	//submit buy AAPL 99.9 10
             
             CopyOnWriteArrayList<SellRequest> sellRequests = SellMap.get(request.getCompanySymbol());
             CopyOnWriteArrayList<BuyRequest> buyRequests = BuyMap.get(request.getCompanySymbol());
         	ConcurrentMap<String, Integer> newClientBalance = clientBalance.get(request.getClientId());
-        	int balance = clientBalance.get(request.getClientId()).get(request.getCompanySymbol());
+        	System.out.println(newClientBalance);
+        	int balance = newClientBalance.get(request.getCompanySymbol());
         	LocalDate currentDate = LocalDate.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
             String formattedDate = currentDate.format(formatter);
@@ -453,10 +477,9 @@ public class StockExchangeServer {
     		if(buyRequests == null) {
     			buyRequests = new CopyOnWriteArrayList<BuyRequest>();
     		}
-            
         	if (request.getBuyOrSell().equals("buy")) {
         		
-        	      		
+	      		
         		System.out.println(buyRequests);
         		System.out.println(sellRequests);
     								
@@ -682,7 +705,6 @@ public class StockExchangeServer {
 			/////////////////////////////////////////UPDATING BALANCE OF THE CLIENT//////////////////////
             //responseObserver.onCompleted();
         }
-        
         
         
         @Override

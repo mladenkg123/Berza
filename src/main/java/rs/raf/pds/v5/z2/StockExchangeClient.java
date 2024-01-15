@@ -64,14 +64,7 @@ public class StockExchangeClient {
                 .usePlaintext()
                 .build();
         
-        
-        new Thread(() -> {
-            try {
-                handleTcpConnection();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+          
               
         StockExchangeServiceGrpc.StockExchangeServiceBlockingStub blockingStub = StockExchangeServiceGrpc.newBlockingStub(channel);
         StockExchangeServiceGrpc.StockExchangeServiceStub asyncStub = StockExchangeServiceGrpc.newStub(channel);
@@ -101,6 +94,16 @@ public class StockExchangeClient {
         /////////////////////////////////////////////PRINT STOCKS//////////////////////////////////////////
         
         generateClientId(asyncStub);
+        
+        
+        new Thread(() -> {
+            try {
+                handleTcpConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
         
         System.out.println("Type '/exit' to close the application.");
         System.out.println("Type '/follow @symbol' or '/follow @symbol1,@symbol2,...' to follow specific symbols.");
@@ -193,16 +196,17 @@ public class StockExchangeClient {
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
 
             while (true) {
-             
-                simulateAutomaticActions(out);
+                if (clientId != null) {
+                    simulateAutomaticActions(out);
 
-                String response = in.readLine();
-                System.out.println("Server response: " + response);
+                    String response = in.readLine();
+                    System.out.println("Server response: " + response);
 
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }                	
                 }
             }
         }
@@ -231,20 +235,26 @@ public class StockExchangeClient {
                 e.printStackTrace();
             }
         }
-    }
+    }//submit buy AAPL 50 100
     private static void simulateAction(PrintWriter out, String action) {
-        // Razdvojiti buy/sell od submit
+        
         String[] symbols = {"TMUS", "GE", "AAPL", "HCI", "TSLA", "ZBH", "TSM"};
-    	
         String symbol = symbols[new Random().nextInt(symbols.length)];
 
         double price = 100 + (Math.random() - 0.5) * 10;
         int quantity = new Random().nextInt(10) + 1;
-        
-        String message = String.format("%s %s %.2f %d", action, symbol, price, quantity);
-        out.println(message);
-
-        System.out.println("Sent to server: " + message);
+        if (action == "/buy" || action == "/sell") {
+        	   String message = String.format("%s %s %.2f %d %s", action, symbol, price, quantity, clientId);
+               out.println(message);
+               System.out.println("Sent to server: " + message);
+        } else if (action == "/submit") {
+        	  String[] buyOrSell = {"buy", "sell"};
+        	  String action2 = buyOrSell[new Random().nextInt(buyOrSell.length)];
+        	  String message = String.format("%s %s %s %.2f %d %s", action, action2, symbol, price, quantity, clientId);
+              out.println(message);
+              System.out.println("Sent to server: " + message);
+        }
+      
     }
     
     //////////////////////////////////////////CLIENT ID /////////////////////////////////
