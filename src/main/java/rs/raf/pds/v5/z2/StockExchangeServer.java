@@ -57,43 +57,12 @@ public class StockExchangeServer {
         server.start();
         System.out.println("StockExchangeServer started on port 8090");
         
-        startSimulationThread();
-        startTcpServer();
+        startSimulationThread();     
         startTransactionLogThread();
        
         server.awaitTermination();
     }
     
-    private static void startTcpServer() {
-        new Thread(() -> {
-            try (ServerSocket serverSocket = new ServerSocket(8080)) {
-                System.out.println("TCP Server started on port 8080");
-                while (true) {
-                    Socket clientSocket = serverSocket.accept();
-                    new Thread(() -> handleTcpConnection(clientSocket)).start();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
-    
-    private static void handleTcpConnection(Socket clientSocket) {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
-
-            String clientMessage;
-            while ((clientMessage = in.readLine()) != null) {
-                System.out.println("Received from client: " + clientMessage);
-
-                String response = ("Response");
-           
-                out.println(response);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     
     
     private static final CopyOnWriteArrayList<StreamObserver<StockData>> observers = new CopyOnWriteArrayList<>();
@@ -162,11 +131,72 @@ public class StockExchangeServer {
         		stockDataArray.add(data);
         		
         	}
-           
+        	
         }
 
+        ///////////////////////////////TCP//////////////////////////////////////////////
         
-             
+        protected StockExchangeServiceImpl() {
+        	startTcpServer();
+        }
+        
+        private  void startTcpServer() {
+            new Thread(() -> {
+                try (ServerSocket serverSocket = new ServerSocket(8080)) {
+                    System.out.println("TCP Server started on port 8080");
+                    while (true) {
+                        Socket clientSocket = serverSocket.accept();
+                        new Thread(() -> handleTcpConnection(clientSocket)).start();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
+        
+        private  void handleTcpConnection(Socket clientSocket) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
+
+                String clientMessage;
+                while ((clientMessage = in.readLine()) != null) {
+                   
+                    String[] message = clientMessage.split(" ");
+                    System.out.println("Received from client: " + clientMessage);
+               
+                    if (message.length > 0 && message != null) {
+                    	String action = message[0];
+                    	String symbol = message[1];
+                    	double price = Double.parseDouble(message[2]);
+                    	int quantity = Integer.parseInt(message[3]);
+                    	     
+                    	if (action == "buy") {
+                    		BuyRequest request1 = BuyRequest.newBuilder()
+                        			.setCompanySymbol(symbol)
+                        			.setPricePerShare(price)
+                        			.setQuantity(quantity)
+                        			.build();
+                    		doBuyAction(request1);
+                    	} else if (action == "sell") {
+                    		SellRequest request2 = SellRequest.newBuilder()
+                    				.setCompanySymbol(symbol)
+                        			.setPricePerShare(price)
+                        			.setQuantity(quantity)
+                        			.build();
+                    		doSellAction(request2);
+                    	}
+                    	                  
+                    }       
+                    String response = ("Response");
+               
+                    out.println(response);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        ///////////////////////////////TCP//////////////////////////////////////////////
+ 
         @Override
         public void getStockData(StockRequest request, StreamObserver<StockData> responseObserver) {
             observers.add(responseObserver);
@@ -327,25 +357,9 @@ public class StockExchangeServer {
         
         @Override
         public void buy(BuyRequest request, StreamObserver<BuyResponse> responseObserver) {
-               
-                   	
-        	CopyOnWriteArrayList<BuyRequest> BuyList = BuyMap.entrySet().stream()
-        	        .filter(entry -> entry.getKey().equals(request.getCompanySymbol()))
-        	        .map(Map.Entry::getValue)
-        	        .findFirst()
-        	        .orElse(new CopyOnWriteArrayList<>());
-
-               
-
-            BuyList.add(BuyRequest.newBuilder()               
-            		.setCompanySymbol(request.getCompanySymbol())
-                    .setPricePerShare(request.getPricePerShare())
-                    .setQuantity(request.getQuantity())
-                    .setClientId(request.getClientId())
-                    .build());
-
-            BuyMap.put(request.getCompanySymbol(), BuyList);
-            
+              
+        	doBuyAction(request); 
+                   	          
             BuyResponse buyResp = BuyResponse.newBuilder()
             		   .setSuccess(true)
             		   .setMessage("Your order has been fullfiled")
@@ -354,26 +368,31 @@ public class StockExchangeServer {
             responseObserver.onNext(buyResp);
             responseObserver.onCompleted();
         }
+        
+        public void doBuyAction(BuyRequest request) {
+        	CopyOnWriteArrayList<BuyRequest> BuyList = BuyMap.entrySet().stream()
+        	        .filter(entry -> entry.getKey().equals(request.getCompanySymbol()))
+        	        .map(Map.Entry::getValue)
+        	        .findFirst()
+        	        .orElse(new CopyOnWriteArrayList<>());
+
+
+            BuyList.add(BuyRequest.newBuilder()               
+            		.setCompanySymbol(request.getCompanySymbol())
+                    .setPricePerShare(request.getPricePerShare())
+                    .setQuantity(request.getQuantity())
+                    .setClientId(request.getClientId())
+                    .build());
+
+            BuyMap.put(request.getCompanySymbol(), BuyList);    	
+        }
 
         @Override
         public void sell(SellRequest request, StreamObserver<SellResponse> responseObserver) {
         	
         	if (clientBalance.get(request.getClientId()).get(request.getCompanySymbol()) >= request.getQuantity()) {
-        		CopyOnWriteArrayList<SellRequest> SellList = SellMap.entrySet().stream()
-            	        .filter(entry -> entry.getKey().equals(request.getCompanySymbol()))
-            	        .map(Map.Entry::getValue)
-            	        .findFirst()
-            	        .orElse(new CopyOnWriteArrayList<>());
-                   
-
-                SellList.add(SellRequest.newBuilder()               
-                		.setCompanySymbol(request.getCompanySymbol())
-                        .setPricePerShare(request.getPricePerShare())
-                        .setQuantity(request.getQuantity())
-                        .setClientId(request.getClientId())
-                        .build());
-
-                SellMap.put(request.getCompanySymbol(), SellList);
+        	
+                doSellAction(request);
                 
                 SellResponse sellResp = SellResponse.newBuilder()
                 		   .setSuccess(true)
@@ -395,7 +414,23 @@ public class StockExchangeServer {
         	        	
         }
         
-        
+        public void doSellAction(SellRequest request) {
+        	CopyOnWriteArrayList<SellRequest> SellList = SellMap.entrySet().stream()
+        	        .filter(entry -> entry.getKey().equals(request.getCompanySymbol()))
+        	        .map(Map.Entry::getValue)
+        	        .findFirst()
+        	        .orElse(new CopyOnWriteArrayList<>());
+               
+
+            SellList.add(SellRequest.newBuilder()               
+            		.setCompanySymbol(request.getCompanySymbol())
+                    .setPricePerShare(request.getPricePerShare())
+                    .setQuantity(request.getQuantity())
+                    .setClientId(request.getClientId())
+                    .build());
+
+            SellMap.put(request.getCompanySymbol(), SellList);
+        }
         
         @Override
         public void submitOrder(OrderRequest request, StreamObserver<OrderResponse> responseObserver) {

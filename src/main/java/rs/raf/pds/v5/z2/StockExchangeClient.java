@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;import java.util.Set;
@@ -52,6 +53,7 @@ public class StockExchangeClient {
     private static String clientId = null;
     private static boolean ToF = false;
     private static Set<String> symbolsToFollow = new HashSet<>();
+    private static final List<StockData> allStockData = new ArrayList<>();
     static {
         AnsiConsole.systemInstall();
     }
@@ -83,8 +85,8 @@ public class StockExchangeClient {
         
         System.out.println("Calling getStockData method...");
 
+        
         Iterator<StockData> stocks = blockingStub.getStockData(stockRequest);
-        List<StockData> allStockData = new ArrayList<>();
         //Set<String> symbolsToFollow = new HashSet<>();
         System.out.println("Getting stocks...");
         for (Iterator<StockData> iterator = stocks; iterator.hasNext(); ) {
@@ -95,6 +97,7 @@ public class StockExchangeClient {
         for (StockData stock : allStockData) {
             printStockData(stock);
         }
+        
         /////////////////////////////////////////////PRINT STOCKS//////////////////////////////////////////
         
         generateClientId(asyncStub);
@@ -190,19 +193,60 @@ public class StockExchangeClient {
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
 
             while (true) {
-                out.println();
+             
+                simulateAutomaticActions(out);
 
                 String response = in.readLine();
                 System.out.println("Server response: " + response);
 
                 try {
-                    Thread.sleep(99999999);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
     }
+    
+    private static void simulateAutomaticActions(PrintWriter out) {
+        String[] actions = {"/buy", "/sell", "/submit"};
+
+        Random random = new Random();
+        for (int i = 0; i < 3; i++) {
+            String randomAction = actions[random.nextInt(actions.length)];
+
+            switch (randomAction) {
+                case "/buy":
+                case "/sell":
+                case "/submit":
+                    simulateAction(out, randomAction);
+                    break;
+                default:
+                    break;
+            }
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private static void simulateAction(PrintWriter out, String action) {
+        // Razdvojiti buy/sell od submit
+        String[] symbols = {"TMUS", "GE", "AAPL", "HCI", "TSLA", "ZBH", "TSM"};
+    	
+        String symbol = symbols[new Random().nextInt(symbols.length)];
+
+        double price = 100 + (Math.random() - 0.5) * 10;
+        int quantity = new Random().nextInt(10) + 1;
+        
+        String message = String.format("%s %s %.2f %d", action, symbol, price, quantity);
+        out.println(message);
+
+        System.out.println("Sent to server: " + message);
+    }
+    
     //////////////////////////////////////////CLIENT ID /////////////////////////////////
     
     
